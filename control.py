@@ -52,13 +52,13 @@ class PS4Controller(object):
             for event in pygame.event.get():
                 if event.type == pygame.JOYAXISMOTION:
                     if event.axis == 0:
-                        print(event.value)
+                        print(round(event.value,2))
                         #if event.value > 0:
                             #print ("right")
                         #if event.value < 0:
                             #print ("left")
                     if event.axis == 1:
-                        print(event.value)
+                        print(round(event.value,2))
                         #if event.value > 0:
                             #print ("down")
                         #if event.value < 0:
