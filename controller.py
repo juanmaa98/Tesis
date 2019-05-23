@@ -62,10 +62,11 @@ class PS4Controller(object):
                 # Insert your code on what you would like to happen for each event here!
                 # In the current setup, I have the state simply printing out to the screen.
                 
-                os.system('clear')
-                pprint.pprint(self.button_data)
-                pprint.pprint(self.axis_data)
-                pprint.pprint(self.hat_data)
+                #os.system('clear')
+                #pprint.pprint(self.button_data)
+                #pprint.pprint(self.axis_data)
+                print(self.axis_data)
+                #pprint.pprint(self.hat_data)
 
 
 if __name__ == "__main__":
