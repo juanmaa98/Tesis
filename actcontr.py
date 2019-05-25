@@ -59,7 +59,9 @@ def main():
     start=time.time()
     offseto=0
     tant=time.time()-start
-    while(True):
+    pressed=False
+    while(not pressed):
+        pressed=bool(stick.get_button(1))
         tiempo=time.time()-start
         pygame.event.get()
         arg=tiempo*w
