@@ -30,14 +30,16 @@ import numpy as np
 import time
 import pygame
 
+
+
 def main():
     
-
     pygame.init()
     pygame.joystick.init()
 
     stick = pygame.joystick.Joystick(0)
     stick.init()
+
     # Parse options
     #parser = common_argument_parser(desc=main.__doc__)
     #args = parser.parse_args()
@@ -61,13 +63,15 @@ def main():
     tant=time.time()-start
     pressed=False
     while(not pressed):
-        pressed=bool(stick.get_button(1))
+        pressed=bool(stick.get_button(2))
         tiempo=time.time()-start
         pygame.event.get()
         arg=tiempo*w
         offsetn=round(stick.get_axis(0),2)
         der=A*(offsetn-offseto)/(tiempo-tant)
         vel=np.abs(int((60*A*w*np.cos(w*tiempo)+60*der)*1023/(114*360)))
+        if vel > 1023:
+            vel=1023
         while(arg > 2*np.pi):
             arg-=2*np.pi
 
@@ -80,9 +84,16 @@ def main():
         print(objetivo," ",vel," ",int(60*der*1023/(114*360)))
         tant=time.time()-start
         offseto=offsetn
-        time.sleep(0.1)
+        time.sleep(0.05)
     # Close the serial connection
-    #serial_connection.close()
-
+    #serial_connection.close()   
+    while(True):
+        pygame.event.get()
+        x=bool(stick.get_button(1))
+        if x:
+            main()
+        triangulo=bool(stick.get_button(3))
+        if triangulo:
+            break
 if __name__ == '__main__':
     main()
