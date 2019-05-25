@@ -33,7 +33,7 @@ import pygame
 
 
 def main():
-    
+
     pygame.init()
     pygame.joystick.init()
 
@@ -56,6 +56,10 @@ def main():
     w=2*np.pi*freq
     A=45
 
+    iniciar=False
+    while(not iniciar):
+        pygame.event.get()
+        iniciar=stick.get_button(1)
 
     #sc.goto(dynamixel_id, 0, speed=512, degrees=True)
     start=time.time()
