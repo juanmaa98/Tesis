@@ -168,7 +168,7 @@ def main():
             fase=calcularFase(datospmotor,datosroll,dt)
             Amax=int(np.max(datosroll))
 
-        i++
+        i+=1
         if i >= Ndatos:
             i=0
 
