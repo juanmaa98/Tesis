@@ -90,7 +90,7 @@ def main():
     
     freq=1.1
     w=2*np.pi*freq
-    A=45
+    Am=45
 
     iniciar=False
     while(not iniciar):
@@ -113,7 +113,14 @@ def main():
 
     fase=np.pi/2
     K=1
+    K2=0.5
+    #Amplitud deseada del roll
+    Ades=20
+    Amax=Ades
     while(not pressed):
+        
+        A=Am+int(K2(Ades-Amax))
+
 
         error=np.pi/2-fase
         pygame.event.get()
@@ -139,16 +146,16 @@ def main():
             objetivo=-A+int(A*offsetn)
             sc.goto(dynamixel_id, objetivo, speed=vel, degrees=True)
 
-        #print(objetivo," ",vel," ",int(60*der*1023/(114*360)))
+        #print(objetivo," ",vel," ",int(60*der*1023/(114*360)))clu
         pmotor=sc.get_present_position(dynamixel_id,degrees=True)
 
         #Daots de la IMU
         if imu.IMURead():
         # x, y, z = imu.getFusionData()
         # print("%f %f %f" % (x,y,z))
-        data = imu.getIMUData()
-        fusionPose = data["fusionPose"]
-        roll=math.degrees(fusionPose[0])
+            data = imu.getIMUData()
+            fusionPose = data["fusionPose"]
+            roll=math.degrees(fusionPose[0])
         
         tant=time.time()-start
         offseto=offsetn
@@ -158,7 +165,8 @@ def main():
             datospmotor[i/2]=pmotor
 
         if i==Ndatos-1:
-            fase=calcularFase(datospmotor,datosroll,dt)   
+            fase=calcularFase(datospmotor,datosroll,dt)
+            Amax=int(np.max(datosroll))
 
         i++
         if i >= Ndatos:
