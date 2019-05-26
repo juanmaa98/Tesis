@@ -67,9 +67,10 @@ def main():
     tant=time.time()-start
     pressed=False
     while(not pressed):
+        pygame.event.get()
         pressed=bool(stick.get_button(2))
         tiempo=time.time()-start
-        pygame.event.get()
+
         arg=tiempo*w
         offsetn=round(stick.get_axis(0),2)
         der=A*(offsetn-offseto)/(tiempo-tant)
