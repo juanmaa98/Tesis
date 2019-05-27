@@ -90,12 +90,12 @@ def main():
     dt=0.01
 
     fase=np.pi/2
-    K=0
+    K=0.5
     K2=0.5
     #Amplitud deseada del roll
     Ades=15
     Amax=Ades
-    error=1
+    error=0
     while(not pressed):
         
         A=Am+int(K2*(Ades-Amax))
@@ -107,18 +107,20 @@ def main():
         pressed=bool(stick.get_button(2))
         tiempo=time.time()-start
 
-        arg=tiempo*w
+        arg=w*tiempo+K*error
         offsetn=round(stick.get_axis(0),1)
         if 0.2>=np.abs(offsetn):
             offsetn=0
         der=A*(offsetn-offseto)/(tiempo-tant)
-        vel=int(np.abs((60*A*w*np.cos(w*tiempo+K*error)-60*der)*1023/(114*360)))
-
-        if vel > 1023:
-            vel=1023
+        
 
         while(arg > 2*np.pi):
             arg-=2*np.pi
+
+        vel=int(np.abs((60*A*w*np.cos(arg)-60*der)*1023/(114*360)))
+
+        if vel > 1023:
+            vel=1023
 
         if arg <= np.pi/2 or (arg>=3*np.pi/2):
             objetivo=A-int(A*offsetn)
