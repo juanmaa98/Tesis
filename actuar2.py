@@ -24,8 +24,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-#from pyax12.connection import Connection
-#from pyax12.argparse_default import common_argument_parser
+from pyax12.connection import Connection
+from pyax12.argparse_default import common_argument_parser
 import numpy as np
 import time
 
@@ -33,42 +33,40 @@ import time
 def main():
 
     # Parse options
-    #parser = common_argument_parser(desc=main.__doc__)
-    #args = parser.parse_args()
-
+    parser = common_argument_parser(desc=main.__doc__)
+    args = parser.parse_args()
+    #print(args)
     # Connect to the serial port
-    #sc = Connection(port=args.port,
-                                   #baudrate=args.baudrate,
-                                   #timeout=args.timeout,
-                                   #rpi_gpio=args.rpi)
+    sc = Connection(port="/dev/ttyUSB0", baudrate=1000000)
 
-    #dynamixel_id = args.dynamixel_id
+    dynamixel_id = 1
     
     freq=1.1
     w=2*np.pi*freq
     A=45
 
 
-    #sc.goto(dynamixel_id, 0, speed=512, degrees=True)
+    sc.goto(dynamixel_id, 0, speed=512, degrees=True)
+    time.sleep(1)
     start=time.time()
     while(True):
         tiempo=time.time()-start
         arg=tiempo*w
-        vel=np.abs(int(60*A*w*np.cos(w*tiempo)*1023/(114*360)))
+        vel=int(np.abs(60*A*w*np.cos(w*tiempo)*1023/(114*360)))
         while(arg > 2*np.pi):
             arg-=2*np.pi
 
         if arg <= np.pi/2 or (arg>=3*np.pi/2):
             objetivo=45
-            #sc.goto(dynamixel_id, objetivo, speed=vel, degrees=True)
+            sc.goto(dynamixel_id, objetivo, speed=vel, degrees=True)
         else:
             objetivo=-45
-            #sc.goto(dynamixel_id, objetivo, speed=vel, degrees=True)
+            sc.goto(dynamixel_id, objetivo, speed=vel, degrees=True)
         print(objetivo," ",vel)
         time.sleep(0.04)
         tant=time.time()-start
     # Close the serial connection
-    #serial_connection.close()
+    serial_connection.close()
 
 if __name__ == '__main__':
     main()
