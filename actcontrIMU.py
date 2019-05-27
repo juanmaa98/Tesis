@@ -91,7 +91,7 @@ def main():
 
     fase=np.pi/2
     K=0.5
-    K2=0.5
+    K2=0.3
     #Amplitud deseada del roll
     Ades=15
     Amax=Ades
