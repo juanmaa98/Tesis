@@ -62,9 +62,9 @@ def main():
     sc = Connection(port="/dev/ttyUSB0", baudrate=1000000)    
     dynamixel_id = 1
     
-    freq=0.9
+    freq=1.1
     w=2*np.pi*freq
-    Am=45
+    Am=50
 
     iniciar=False
     while(not iniciar):
@@ -90,23 +90,27 @@ def main():
     dt=0.01
 
     fase=np.pi/2
-    K=0.5
+    K=0
     K2=0.5
     #Amplitud deseada del roll
     Ades=15
     Amax=Ades
+    error=1
     while(not pressed):
         
         A=Am+int(K2*(Ades-Amax))
-
-
+        #if A>50:
+        #    A=50
         error=np.pi/2-fase
+        #print(error)
         pygame.event.get()
         pressed=bool(stick.get_button(2))
         tiempo=time.time()-start
 
         arg=tiempo*w
-        offsetn=round(stick.get_axis(0),2)
+        offsetn=round(stick.get_axis(0),1)
+        if 0.2>=np.abs(offsetn):
+            offsetn=0
         der=A*(offsetn-offseto)/(tiempo-tant)
         vel=int(np.abs((60*A*w*np.cos(w*tiempo+K*error)-60*der)*1023/(114*360)))
 
@@ -124,7 +128,7 @@ def main():
             objetivo=-A-int(A*offsetn)
             sc.goto(dynamixel_id, objetivo, speed=vel, degrees=True)
 
-        #print(objetivo," ",vel," ",int(60*der*1023/(114*360)))clu
+        #print(objetivo," ",vel," ",int(60*der*1023/(114*360))," ",error)
         pmotor=sc.get_present_position(dynamixel_id,degrees=True)
 
         #Daots de la IMU
@@ -135,7 +139,7 @@ def main():
             data = imu.getIMUData()
             fusionPose = data["fusionPose"]
             roll=np.degrees(fusionPose[1])
-         
+
             leyo=True
         
         tant=time.time()-start
