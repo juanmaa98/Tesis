@@ -24,8 +24,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-#from pyax12.connection import Connection
-#from pyax12.argparse_default import common_argument_parser
+from pyax12.connection import Connection
+from pyax12.argparse_default import common_argument_parser
 import numpy as np
 import time
 import pygame
@@ -52,6 +52,10 @@ def main():
 
     #dynamixel_id = args.dynamixel_id
     
+    sc = Connection(port="/dev/ttyUSB0", baudrate=1000000)
+
+    dynamixel_id = 1
+
     freq=1.1
     w=2*np.pi*freq
     A=45
@@ -61,7 +65,13 @@ def main():
         pygame.event.get()
         iniciar=stick.get_button(1)
 
-    #sc.goto(dynamixel_id, 0, speed=512, degrees=True)
+    
+    sc.set_cw_angle_limit(dynamixel_id,-150,degrees=True)
+    sc.set_ccw_angle_limit(dynamixel_id,150,degrees=True) 
+    
+    sc.goto(dynamixel_id, 0, speed=512, degrees=True)
+    time.sleep(1)
+
     start=time.time()
     offseto=0
     tant=time.time()-start
@@ -74,24 +84,24 @@ def main():
         arg=tiempo*w
         offsetn=round(stick.get_axis(0),2)
         der=A*(offsetn-offseto)/(tiempo-tant)
-        vel=np.abs(int((60*A*w*np.cos(w*tiempo)+60*der)*1023/(114*360)))
+        vel=int(np.abs((60*A*w*np.cos(w*tiempo)-60*der)*1023/(114*360)))
         if vel > 1023:
             vel=1023
         while(arg > 2*np.pi):
             arg-=2*np.pi
 
         if arg <= np.pi/2 or (arg>=3*np.pi/2):
-            objetivo=A+int(A*offsetn)
-            #sc.goto(dynamixel_id, objetivo, speed=vel, degrees=True)
+            objetivo=A-int(A*offsetn)
+            sc.goto(dynamixel_id, objetivo, speed=vel, degrees=True)
         else:
-            objetivo=-A+int(A*offsetn)
-            #sc.goto(dynamixel_id, objetivo, speed=vel, degrees=True)
-        print(objetivo," ",vel," ",int(60*der*1023/(114*360)))
+            objetivo=-A-int(A*offsetn)
+            sc.goto(dynamixel_id, objetivo, speed=vel, degrees=True)
+        #print(objetivo," ",vel," ",int(60*der*1023/(114*360)))
         tant=time.time()-start
         offseto=offsetn
-        time.sleep(0.05)
+        time.sleep(0.01)
     # Close the serial connection
-    #serial_connection.close()   
+    sc.close()   
     while(True):
         pygame.event.get()
         x=bool(stick.get_button(1))
